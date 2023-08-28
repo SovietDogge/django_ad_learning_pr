@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 
 from ads.models import User, Location
+from ads.serializers.users import UserSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -26,7 +27,7 @@ class UserDetailView(DetailView):
 
     def get(self, request, *args, **kwargs):
         user = self.get_object()
-        return JsonResponse({'username': user.username, 'role': user.role})
+        return JsonResponse(UserSerializer(user).data)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
