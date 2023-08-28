@@ -3,29 +3,21 @@ import json
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DetailView, UpdateView, ListView, CreateView, DeleteView
+from django.views.generic import UpdateView, CreateView, DeleteView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from ads.models import Category
+from ads.serializers.categories import CategoriesSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CategoryView(ListView):
-    model = Category
-
-    def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
-        all_datasets = self.object_list.order_by('name')
-        datasets = [{'id': dataset.id, 'name': dataset.name} for dataset in all_datasets]
-        return JsonResponse(datasets, safe=False)
+class CategoryView(ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoriesSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class DetailCategoryView(DetailView):
-    model = Category
-
-    def get(self, request, *args, **kwargs):
-        category = self.get_object()
-        return JsonResponse({'id': category.id, 'name': category.name})
+class DetailCategoryView(RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoriesSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')

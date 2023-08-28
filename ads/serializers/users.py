@@ -4,7 +4,7 @@ from ads.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    location_id = serializers.SlugRelatedField(read_only=True, slug_field='name')
+    # location_id = serializers.SlugRelatedField(read_only=True, slug_field='name')
 
     class Meta:
         model = User

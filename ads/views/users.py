@@ -5,57 +5,26 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import DeleteView, CreateView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 
 from ads.models import User, Location
 from ads.serializers.users import UserSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class UserView(ListView):
-    model = User
-
-    def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
-        return JsonResponse([{'username': user.username, 'role': user.role}
-                             for user in self.object_list], safe=False)
+class UserView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class UserDetailView(DetailView):
-    model = User
-
-    def get(self, request, *args, **kwargs):
-        user = self.get_object()
-        return JsonResponse(UserSerializer(user).data)
+class UserDetailView(RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class UserUpdateView(UpdateView):
-    model = User
-    fields = ['first_name', 'last_name', 'username', 'password', 'role', 'age', 'location_id']
-
-    def patch(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
-
-        updated_data = json.loads(request.body)
-
-        self.object.first_name = updated_data.get('first_name') or self.object.first_name
-        self.object.last_name = updated_data.get('last_name') or self.object.last_name
-        self.object.username = updated_data.get('username') or self.object.username
-        self.object.password = updated_data.get('password') or self.object.password
-        self.object.role = updated_data.get('role') or self.object.role
-        self.object.age = updated_data.get('age') or self.object.age
-        self.object.location_id = Location(updated_data.get('location_id')) or self.object.location_id
-        self.object.save()
-
-        return JsonResponse({'first_name': self.object.first_name,
-                             'last_name': self.object.last_name,
-                             'username': self.object.username,
-                             'password': self.object.password,
-                             'role': self.object.role,
-                             'age': self.object.age,
-                             'location_id': self.object.location_id.id})
+class UserUpdateView(UpdateAPIView):  # does not work
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')

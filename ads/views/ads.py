@@ -1,42 +1,20 @@
 import json
 
-from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 import lesson27.settings
 from ads.models import Ad, Category, User
+from ads.serializers.ads import AdsSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class AdsView(ListView):
-    model = Ad
-
-    def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
-        all_ads = self.object_list.order_by('-price')
-
-        paginator = Paginator(all_ads, lesson27.settings.TOTAL_PAGE_ON)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        ads = []
-        for ad in page_obj:
-            ads.append({'id': ad.id,
-                        'name': ad.name,
-                        'price': ad.price,
-                        'description': ad.description,
-                        'image': ad.image.url,
-                        'is_published': ad.is_published,
-                        'category_id': ad.category_id.id,
-                        'author_id': ad.author_id.id}
-                       )
-
-        response = {'items': ads, 'total': all_ads.count(), 'num_pages': paginator.num_pages}
-        return JsonResponse(response, safe=False)
+class AdsView(ListAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdsSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -63,20 +41,9 @@ class CreateAdView(CreateView):
             'is_published': new_ad.is_published})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class AdsDetailView(DetailView):
-    model = Ad
-
-    def get(self, request, *args, **kwargs):
-        add = self.get_object()
-        return JsonResponse({'id': add.id,
-                             'name': add.name,
-                             'author': add.author,
-                             'price': add.price,
-                             'description': add.description,
-                             'address': add.address,
-                             'is_published': add.is_published}
-                            )
+class AdsDetailView(RetrieveAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdsSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
