@@ -1,14 +1,13 @@
 import json
 
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, UpdateView, DeleteView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from django.views.generic import UpdateView, DeleteView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
 
-from ads.models import Ad, Category, User
-from ads.serializers.ads import AdsSerializer
+from ads.models import Ad
+from ads.serializers.ads import AdsSerializer, AdsCreateSerializer
 
 
 class AdsView(ListAPIView):
@@ -16,28 +15,9 @@ class AdsView(ListAPIView):
     serializer_class = AdsSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class CreateAdView(CreateView):
-    model = Ad
-    fields = ['name', 'price', 'description', 'image', 'is_published', 'category_id', 'author_id']
-
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        new_ad = Ad.objects.create(
-            name=data.get('name'),
-            price=data.get('price'),
-            description=data.get('description'),
-            image=data.get('image'),
-            is_published=data.get('is_published'),
-            category_id=get_object_or_404(Category, pk=data.get('category_id')),
-            author_id=get_object_or_404(User, pk=data.get('author_id')),
-        )
-        return JsonResponse({
-            'name': new_ad.name,
-            'author': new_ad.author_id.id,
-            'price': new_ad.price,
-            'description': new_ad.description,
-            'is_published': new_ad.is_published})
+class CreateAdView(CreateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdsCreateSerializer
 
 
 class AdsDetailView(RetrieveAPIView):
