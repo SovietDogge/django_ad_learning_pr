@@ -82,3 +82,8 @@ class AdsUpdateSerializer(serializers.ModelSerializer):
         model = Ad
         fields = '__all__'
 
+
+class AdsDestroySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ad
+        fields = ['id']

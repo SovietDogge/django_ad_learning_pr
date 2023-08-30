@@ -1,11 +1,11 @@
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import UpdateView, DeleteView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
+from django.views.generic import UpdateView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 
 from ads.models import Ad
-from ads.serializers.ads import AdsSerializer, AdsCreateSerializer, AdsUpdateSerializer
+from ads.serializers.ads import AdsSerializer, AdsCreateSerializer, AdsUpdateSerializer, AdsDestroySerializer
 
 
 class AdsView(ListAPIView):
@@ -28,15 +28,9 @@ class AdsUpdateView(UpdateAPIView):
     serializer_class = AdsUpdateSerializer
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class AdsDeleteView(DeleteView):
-    model = Ad
-    success_url = '/'
-
-    def delete(self, request, *args, **kwargs):
-        super().delete(request, *args, **kwargs)
-
-        return JsonResponse({'status': 'ok'}, status=200)
+class AdsDeleteView(DestroyAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdsDestroySerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
