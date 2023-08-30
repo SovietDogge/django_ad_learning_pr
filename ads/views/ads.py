@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +12,20 @@ from ads.serializers.ads import AdsSerializer, AdsCreateSerializer, AdsUpdateSer
 class AdsView(ListAPIView):
     queryset = Ad.objects.all()
     serializer_class = AdsSerializer
+
+    def get(self, request, *args, **kwargs):
+        ad_category = request.GET.getlist('category', None)
+        category_q = None
+        for category in ad_category:
+            if not category_q:
+                category_q = Q(category__id__contains=category)
+            else:
+                category_q |= Q(category__id__contains=category)
+
+        if category_q:
+            self.queryset = self.queryset.filter(category_q)
+
+        return super().get(request, *args, **kwargs)
 
 
 class CreateAdView(CreateAPIView):
@@ -48,3 +63,5 @@ class AdsUploadImage(UpdateView):
             'name': self.object.name,
             'image': self.object.image.url
         })
+
+
