@@ -6,10 +6,10 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView, CreateView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, CreateAPIView
 
 from ads.models import User, Location
-from ads.serializers.users import UserSerializer
+from ads.serializers.users import UserSerializer, UserCreateSerializer, UserUpdateSerializer
 
 
 class UserView(ListAPIView):
@@ -24,7 +24,7 @@ class UserDetailView(RetrieveAPIView):
 
 class UserUpdateView(UpdateAPIView):  # does not work
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserUpdateSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -38,34 +38,9 @@ class UserDeleteView(DeleteView):
         return JsonResponse({'status': 'ok'}, status=200)
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class UserCreateView(CreateView):
-    model = User
-    fields = ['first_name', 'last_name', 'username', 'password', 'role', 'age', 'location_id']
-
-    def post(self, request, *args, **kwargs):
-        user_data = json.loads(request.body)
-
-        user = User.objects.create(
-            first_name=user_data.get('first_name'),
-            last_name=user_data.get('last_name'),
-            username=user_data.get('username'),
-            password=user_data.get('password'),
-            role=user_data.get('role'),
-            age=user_data.get('age'),
-            location_id=Location(user_data.get('location_id')),
-        )
-
-        return JsonResponse({
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'username': user.username,
-            'password': user.password,
-            'role': user.role,
-            'age': user.age,
-            'location_id': user.location_id.id,
-        })
+class UserCreateView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
 
 
 @method_decorator(csrf_exempt, name='dispatch')
