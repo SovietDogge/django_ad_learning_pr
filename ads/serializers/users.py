@@ -13,6 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
+    location_id = serializers.SlugRelatedField(
+        required=False,
+        queryset=Location.objects.all(),
+        slug_field='name'
+    )
 
     class Meta:
         model = User
@@ -26,7 +31,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
 
         location_obj, _ = Location.objects.get_or_create(name=self._location_id)
-        user.location_id.add(location_obj)
+        user.location = location_obj
 
         user.save()
         return user
@@ -43,6 +48,19 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     location_id = serializers.SlugRelatedField(required=False,
                                                queryset=Location.objects.all(),
                                                slug_field='name')
+
+    def is_valid(self, *, raise_exception=False):
+        self._location = self.initial_data.pop('location_id')
+        return super().is_valid(raise_exception=raise_exception)
+
+    def save(self):
+        user = super().save()
+
+        location_obj, _ = Location.objects.get_or_create(name=self._location)
+        user.location = location_obj
+
+        user.save()
+        return user
 
     class Meta:
         model = User

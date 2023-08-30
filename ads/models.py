@@ -26,7 +26,7 @@ class User(models.Model):
     password = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     age = models.IntegerField()
-    location_id = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -39,8 +39,8 @@ class Ad(models.Model):
     price = models.IntegerField()
     description = models.TextField(null=True)
     is_published = models.BooleanField()
-    author_id = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True)
+    category_id = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
     image = models.ImageField(upload_to='ads/img/')
 
     class Meta:

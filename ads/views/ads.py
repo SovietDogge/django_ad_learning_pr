@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, UpdateView, DeleteView
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
-import lesson27.settings
 from ads.models import Ad, Category, User
 from ads.serializers.ads import AdsSerializer
 
