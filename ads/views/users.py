@@ -19,7 +19,7 @@ class UserDetailView(RetrieveAPIView):
     serializer_class = UserSerializer
 
 
-class UserUpdateView(UpdateAPIView):  # does not work
+class UserUpdateView(UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserUpdateSerializer
 
