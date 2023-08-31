@@ -26,7 +26,7 @@ urlpatterns = [
     path('', include('ads.urls.ads')),
     path('', include('ads.urls.users')),
     path('', include('ads.urls.home')),
-    path('', include('ads.urls.categories'))
+    path('', include('ads.urls.categories')),
 ] + location_router.urls
 
 if settings.DEBUG:

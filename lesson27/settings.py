@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'ads',
-    'authentication'
 ]
 
 MIDDLEWARE = [
@@ -141,4 +140,4 @@ REST_FRAMEWORK = {
 }
 
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'ads.User'
