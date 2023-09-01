@@ -45,3 +45,8 @@ class Ad(models.Model):
     class Meta:
         verbose_name = 'Объявление'
         verbose_name_plural = 'Объявления'
+
+
+class Selection(models.Model):
+    name = models.CharField(max_length=150)
+    ad = models.ManyToManyField(Ad)
