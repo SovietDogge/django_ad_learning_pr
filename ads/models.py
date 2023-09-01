@@ -50,3 +50,4 @@ class Ad(models.Model):
 class Selection(models.Model):
     name = models.CharField(max_length=150)
     ad = models.ManyToManyField(Ad)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True)
