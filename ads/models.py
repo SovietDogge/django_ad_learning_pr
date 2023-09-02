@@ -1,6 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+ADMIN = 'admin'
+MODERATOR = 'moderator'
+USER = 'user'
+UNKNOWN = 'unknown'
+
 
 class Category(models.Model):
     name = models.SlugField(max_length=150)
@@ -21,6 +26,9 @@ class Location(models.Model):
 
 
 class User(AbstractUser):
+    ROLE = [(ADMIN, 'admin'), (MODERATOR, 'moderator'), (USER, 'user'), (UNKNOWN, 'unknown')]
+
+    role = models.CharField(choices=ROLE, default=UNKNOWN)
     first_name = models.CharField(max_length=20, null=True)
     last_name = models.CharField(max_length=20, null=True)
     username = models.CharField(max_length=100, unique=True, default=first_name)
