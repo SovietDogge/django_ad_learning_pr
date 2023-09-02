@@ -1,6 +1,7 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, DestroyAPIView, UpdateAPIView
 
 from ads.models import Selection
+from ads.permissions import SelectionDetailViewPermission
 from ads.serializers.selections import SelectionViewSerializer, SelectionDeleteSerializer, SelectionCreateSerializer
 
 

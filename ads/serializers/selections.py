@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
-from ads.models import Selection, Ad
+from ads.models import Selection, Ad, User
 
 
 class SelectionViewSerializer(serializers.ModelSerializer):
-    ad = serializers.SlugRelatedField(
-        queryset=Ad.objects.all(),
-        slug_field='name'
+    owner = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field='username'
     )
 
     class Meta:
